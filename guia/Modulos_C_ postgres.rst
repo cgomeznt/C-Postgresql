@@ -38,15 +38,15 @@ Ahora compilamos para crear nuestro modulo compatible con postgresql::
 
 	$ gcc -fpic -I/usr/include/postgresql/9.4/server/ -shared -o prueba.so prueba.c
 
-Listo ahora probar en pgadminIII. Creamos la funcion en pgadminIII, Imagen 1.::
+Listo ahora probar en pgadminIII. Creamos la funcion en pgadminIII, Imagen 1. ::
 	CREATE FUNCTION cualquiernombre(integer, integer) RETURNS integer
 	AS '/tmp/prueba.so', 'sumadosnumeros'
 	LANGUAGE C STRICT;
 
-Solo resta llamar la funcion y ver el resultado esperado. Imagen 2.::
+Solo resta llamar la funcion y ver el resultado esperado. Imagen 2. ::
 	Select * from cualquiernombre(5, 2)
 
-Tambien se puede correr en un script de plpgsql. Imagen 3.::
+Tambien se puede correr en un script de plpgsql. Imagen 3. ::
 	do language plpgsql $$
 	DECLARE
 	BEGIN
