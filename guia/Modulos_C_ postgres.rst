@@ -10,58 +10,61 @@ Vamos a crear un programa .c que llame las librerias o header requeridas de post
 
 Estos header siempre deben estar "postgres.h" y "fmgr.h" y También es importante la invocación de la macro PG_MODULE_MAGIC
 
-primero instalamos las librerias de desarrollo de la version de postgres que requerimos
+primero instalamos las librerias de desarrollo de la version de postgres que requerimos::
 
-# apt-get install postgresql-server-dev-9.4
+	# apt-get install postgresql-server-dev-9.4
 
-creamos nuestro programa en lenguaje C.
+creamos nuestro programa en lenguaje C.::
 
-vi prueba.c
+	vi prueba.c
 
-#include<postgres.h>
-#include<fmgr.h>
-#include"/tmp/myheader.h"
+	#include<postgres.h>
+	#include<fmgr.h>
+	#include"/tmp/myheader.h"
 
-#ifdef PG_MODULE_MAGIC
-PG_MODULE_MAGIC;
-#endif
+	#ifdef PG_MODULE_MAGIC
+	PG_MODULE_MAGIC;
+	#endif
 
-Creamos nuestro header con nuestra funcion.
+Creamos nuestro header con nuestra funcion.::
 
-vi myheader.h
+	vi myheader.h
 
-int sumadosnumeros(int f, int s){
-	return f+s;
-}
+	int sumadosnumeros(int f, int s){
+		return f+s;
+	}
 
-Ahora compilamos para crear nuestro modulo compatible con postgresql
+Ahora compilamos para crear nuestro modulo compatible con postgresql::
 
-$ gcc -fpic -I/usr/include/postgresql/9.4/server/ -shared -o prueba.so prueba.c
+	$ gcc -fpic -I/usr/include/postgresql/9.4/server/ -shared -o prueba.so prueba.c
 
-Listo ahora probar en pgadminIII. Creamos la funcion en pgadminIII, Imagen 1.
-CREATE FUNCTION cualquiernombre(integer, integer) RETURNS integer
-AS '/tmp/prueba.so', 'sumadosnumeros'
-LANGUAGE C STRICT;
+Listo ahora probar en pgadminIII. Creamos la funcion en pgadminIII, Imagen 1.::
+	CREATE FUNCTION cualquiernombre(integer, integer) RETURNS integer
+	AS '/tmp/prueba.so', 'sumadosnumeros'
+	LANGUAGE C STRICT;
 
-Solo resta llamar la funcion y ver el resultado esperado. Imagen 2.
-Select * from cualquiernombre(5, 2)
+Solo resta llamar la funcion y ver el resultado esperado. Imagen 2.::
+	Select * from cualquiernombre(5, 2)
 
-Tambien se puede correr en un script de plpgsql. Imagen 3.
-do language plpgsql $$
-DECLARE
-BEGIN
---PERFORM * from cualquiernombre(5, 2);
-raise info 'La suma de los dos numeros es; %',cualquiernombre(5, 2);
-END
-$$
+Tambien se puede correr en un script de plpgsql. Imagen 3.::
+	do language plpgsql $$
+	DECLARE
+	BEGIN
+	--PERFORM * from cualquiernombre(5, 2);
+	raise info 'La suma de los dos numeros es; %',cualquiernombre(5, 2);
+	END
+	$$
 
 Imagen 1.
+
 .. figure:: ../images/1.png
 
 Imagen 2.
+
 .. figure:: ../images/2.png
 
 Imagen 3.
+
 .. figure:: ../images/3.png
 
 
